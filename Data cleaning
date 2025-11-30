@@ -1,0 +1,287 @@
+ Lesson 9 & 10 – Superstore Dataset Analysis
+
+ 1. What the Dataset Is About?
+
+The dataset used in this notebook is a 'Superstore sales dataset'.
+
+- Unit of analysis: each row represents one product line in one customer order.
+- Total rows:9,994 (before cleaning).
+- Total columns: 21.
+This dataset describes retail transactions of a store, including who bought,what they bought, when it was ordered and shipped, where the customer is located, how it was shipped, and how much sales and profit each transaction generated.
+
+2. Data Cleaning Steps
+
+All cleaning is designed to make the dataset consistent, analysis-ready, and reproducible.
+
+2.1 Initial Checks
+   1. Structure & types
+
+     - Used: 'df.info()'
+     - Observed:
+     - 9,994 rows and 21 columns.
+     - 'Order Date' and 'Ship Date' are already 'datetime64[ns]'.
+     - Numeric columns: 'Row ID', 'Postal Code', 'Quantity' (int), 'Sales', 'Discount', 'Profit' (float).
+     - The rest are categorical/text ('object').
+
+  2. Missing values
+
+   - Used: 'df.isnull().sum()'
+   - Result: 0 missing values in all columns.
+   - Decision: No imputation needed (no fill / drop for NaNs).
+
+  3. Duplicates
+
+   - Used: 'df.duplicated().sum()'
+   - Result: 1 duplicated row in the dataset.
+   - Decision: remove duplicate to avoid counting the same transaction twice.
+
+2.2 Cleaning Operations
+
+  1. Standardize column names
+
+   - Strip spaces, lowercase all names, optionally replace spaces with underscores.
+   - Example:
+     - 'Order Date' → 'order_date'
+     - 'Postal Code' → 'postal_code'
+
+   2.Standardize string values
+
+     - For all text columns:
+     - Convert to lowercase.
+     - Strip leading/trailing spaces.
+   - Example:
+     - 'West' → 'west'
+     -'Second Class' → 'second class'
+
+   3.Remove duplicates
+
+   - Drop the single duplicated row with `df.drop_duplicates()`.
+
+  4.Confirm final structure
+
+   - Check shape after cleaning.
+   - Check 'df.info()' again to confirm types and column names.
+
+2.3 Final Cleaned Dataset (Summary)
+
+After cleaning:
+
+- Rows: 9,993 (original 9,994 minus 1 duplicate).
+- Columns: 21 (unchanged).
+- Missing values: none.
+- Column names: clean, consistent, and lowercase.
+- Text fields: lowercased and stripped of extra spaces.
+- Types: appropriate (dates as datetime, numerics as int/float, others as categorical/text).
+
+This version is ready for exploratory data analysis and visualization.
+
+3. Statistics & Data Analysis Vocabulary (Glossary)
+
+Below are the main terms and methods used/learned in this lesson.
+
+ 3.1 NumPy & Arrays
+
+- NumPy  
+  Python library for fast numerical computation, especially vectors and matrices.
+
+- Array (np.array)  
+  A structured container for numbers with one or more dimensions. All elements share the same type.
+
+- 1D Array 
+  A single list of values, e.g. [10, 20, 30].
+
+- 2D Array  
+  A table-like structure (rows × columns), e.g. [[1, 2], [3, 4]].
+
+- dtype 
+  The data type of array elements (e.g.int32,float64).
+
+- shape  
+  The size of the array in each dimension.
+  - Example: (5,) = 5 elements in 1D.
+  - Example: (3, 4) = 3 rows, 4 columns.
+
+3.2 Basic Statistics
+
+Using functions such as np.sum, np.mean, np.std, etc.
+
+- Sum (np.sum) 
+  Total of all values.
+
+- Mean / Average (np.mean)  
+  Sum of values divided by the number of values.
+
+- Standard Deviation (np.std)  
+  Measures how spread out the values are around the mean.
+  - Small std → values are close to the average.
+  - Large std → values vary a lot.
+
+- Maximum (np.max)
+  Largest value in the array (e.g. best sales day).
+
+ 3.3 Pandas & Tabular Data
+
+- Pandas  
+  Python library to work with tabular data (rows and columns), similar to Excel but programmatic.
+
+- Tabular Data  
+  Data organized in a table form: rows = observations, columns = variables.
+
+-DataFrame  
+  Main pandas object: a 2D labeled data structure with rows and columns.
+
+- Series  
+  A single column of a DataFrame.
+
+- EDA – Exploratory Data Analysis 
+  The process of exploring the data before modeling: inspecting structure, summary statistics, missing values, duplicates, outliers, etc.
+
+3.4 Common Pandas Methods
+
+- df.head()  
+  Shows the first 5 rows (or n rows if df.head(n)).
+
+- df.tail() 
+  Shows the last 5 rows.
+
+- df.info()  
+  Displays:
+  - Number of rows and columns.
+  - Column names.
+  - Data types.
+  - Non-null counts.
+  - Memory usage.
+
+- df.describe() 
+  Shows summary statistics for numeric columns:
+  - count – number of non-missing values.
+  - mean – average.
+  - std – standard deviation.
+  - min – minimum value.
+  - 25%,50%, 75% – quartiles.
+  - max – maximum value.
+
+3.5 Quartiles & Median
+
+  -Quartiles  
+  Points that divide the data distribution into four equal parts.
+  - 25% (Q1): 25% of values are below this.
+  - 50%  (Q2 / median): half the values are below, half above.
+  - 75% (Q3): 75% of values are below this.
+
+- Median  
+  The middle value when all values are sorted. Less affected by extreme values than the mean.
+
+3.6 Missing Values & NaN
+
+- Missing Values / NaN  
+  Places where data is absent or undefined (NaN = Not a Number).
+
+- df.isnull()  
+  Returns a boolean DataFrame indicating where values are missing (True/False).
+
+- df.isnull().sum() 
+  Counts missing values per column.
+
+-Handling Missing Values (general techniques)
+  Although this dataset has none, common strategies are:
+  - Drop rows/columns with too many missing values.
+  - Fill with mean/median (for numeric).
+  - Fill with mode or "unknown" (for categorical).
+  - Forward fill / backward fill (time series).
+  - Interpolation (for numeric sequences).
+
+- Forward Fill
+  Replace NaN by the previous known value.
+
+- Backward Fill 
+  Replace NaN by the next known value.
+
+-Linear Interpolation  
+  Fill NaN values by assuming a straight line between the surrounding known points.
+
+ 3.7 Outliers & Skewness
+
+ -Outlier 
+  A value that is very far from the rest of the data (e.g. extremely large or small).
+
+- Skewness 
+  Measures the asymmetry of the distribution:
+  - Right-skewed: long tail to the right (many small values, few very large ones).
+  - Left-skewed: long tail to the left.
+
+3.8 Duplicates
+
+- Duplicate Row 
+  A row where all values are identical to at least one other row.
+
+- df.duplicated() 
+  Returns True for rows that are duplicates.
+
+- df.duplicated().sum() 
+  Counts the number of duplicated rows.
+
+- df.drop_duplicates() 
+  Removes duplicated rows to keep unique entries only.
+
+4. What Can Be Analysed from This Dataset:
+
+This Superstore dataset allows many types of analysis across time, geography, customers, products, and pricing.
+
+4.1 Sales & Profit Overview
+
+- Total sales and total profit.
+- Average sales per order / line.
+- Distribution of profit (how many lines are low profit vs very high profit).
+- Most profitable and least profitable orders or products.
+
+4.2 Time-Based Analysis (Order & Ship Dates)
+
+- Sales and profit by:
+  - Day, month, quarter, year.
+- Detection of:
+  - Trends (is revenue increasing over time?).
+  - Seasonality (e.g. peaks around holidays).
+- Shipping performance:
+  - Compute 'shipping_days = ship_date - order_date'.
+  - Compare average shipping time by ship mode and region.
+
+4.3 Geographic Analysis (Region, State, City, Postal Code)
+
+- Sales and profit by region (West, East, Central, South).
+- Top/bottom states and cities by sales or profit.
+- Identification of unprofitable regions or cities.
+
+4.4 Customer Analysis (Customer ID, Segment)
+
+- Sales and profit by customer segment (Consumer, Corporate, Home Office).
+- Top customers by sales and profit.
+- Customer concentration:
+  - Does a small group of customers drive most of the revenue?
+
+4.5 Product Analysis (Category, Sub-Category, Product Name)
+
+- Sales and profit by category (Furniture, Office Supplies, Technology).
+- Sub-category performance (e.g. Chairs, Tables, Phones, etc.).
+- Top products by:
+  - Sales.
+  - Profit.
+  - Quantity sold.
+- Identification of unprofitable products (negative total profit).
+
+4.6 Discount vs Profit (Pricing Strategy)
+
+- Relationship between discount and profit:
+  - Do higher discounts lead to more profit or more losses?
+- Comparison of profit margin for:
+  - No discount.
+  - Low discount.
+  - High discount.
+- Identification of categories/products where discounts are damaging profitability.
+
+4.7 Combined / Multi-Dimensional Analyses
+
+- Profit by category and region.
+- Sales by segment and category.
+- Shipping time by region and ship mode.
+- Profit margin analysis across multiple dimensions.
